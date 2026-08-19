@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Headcount RH/DP · Grupo Almeria</title>
+<style>
+  :root{
+    --bg:#f4f5f7;
+    --panel:#ffffff;
+    --ink:#1b2430;
+    --ink-soft:#5b6472;
+    --border:#e2e5ea;
+    --accent:#2f5d9c;
+    --accent-soft:#e8eff9;
+    --good:#1c7c4d;
+    --good-bg:#e7f6ee;
+    --warn:#a15c00;
+    --warn-bg:#fff2e0;
+    --bad:#a3271f;
+    --bad-bg:#fbe9e7;
+    --neutral-bg:#eef0f3;
+    --shadow: 0 1px 2px rgba(20,25,35,.06), 0 4px 14px rgba(20,25,35,.06);
+    --radius: 14px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.45;
+  }
+  .wrap{ max-width:1220px; margin:0 auto; padding:22px 20px 60px; }
+
+  header.top{
+    display:flex; align-items:center; justify-content:space-between; gap:16px;
+    margin-bottom:18px; flex-wrap:wrap;
+  }
+  header.top h1{ font-size:20px; margin:0; font-weight:700; }
+  header.top .sub{ color:var(--ink-soft); font-size:13px; margin-top:2px; }
+
+  .units{ display:flex; gap:8px; flex-wrap:wrap; margin:14px 0 20px; }
+  .unit-btn{
+    padding:8px 14px; border-radius:999px; border:1px solid var(--border);
+    background:var(--panel); color:var(--ink-soft); font-size:13px; font-weight:600;
+    cursor:default;
+  }
+  .unit-btn.active{ background:var(--accent); color:#fff; border-color:var(--accent); cursor:pointer; }
+  .unit-btn.disabled{ opacity:.55; cursor:not-allowed; }
+
+  .meta-row{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px; }
+  .meta-chip{
+    background:var(--panel); border:1px solid var(--border); border-radius:10px;
+    padding:8px 12px; font-size:12.5px; color:var(--ink-soft);
+  }
+  .meta-chip b{ color:var(--ink); }
+
+  .stat-grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:12px; margin-bottom:22px;
+  }
+  .stat-tile{
+    background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
+    padding:14px 16px; box-shadow:var(--shadow);
+  }
+  .stat-tile .num{ font-size:26px; font-weight:700; }
+  .stat-tile .lbl{ font-size:12.5px; color:var(--ink-soft); margin-top:2px; }
+  .stat-tile.trab .num{ color:var(--good); }
+  .stat-tile.doenca .num{ color:var(--warn); }
+  .stat-tile.demitido .num{ color:var(--bad); }
+
+  .info-box{
+    background:var(--accent-soft); border:1px solid #bcd2ef; border-radius:var(--radius);
+    padding:16px 18px; margin-bottom:20px;
+  }
+  .info-box h2{ margin:0 0 10px; font-size:14.5px; display:flex; align-items:center; gap:8px; color:var(--accent); }
+  .info-box .alert-item{ background:rgba(255,255,255,.6); }
+  .info-box .pill{ border-color:#bcd2ef; color:var(--accent); }
+
+  .alert-box{
+    background:var(--warn-bg); border:1px solid #f0d3a0; border-radius:var(--radius);
+    padding:16px 18px; margin-bottom:24px;
+  }
+  .alert-box.ok{ background:var(--good-bg); border-color:#bfe4cf; }
+  .alert-box h2{
+    margin:0 0 10px; font-size:14.5px; display:flex; align-items:center; gap:8px; color:var(--warn);
+  }
+  .alert-box.ok h2{ color:var(--good); }
+  .alert-list{ margin:0; padding-left:0; list-style:none; display:flex; flex-direction:column; gap:10px; }
+  .alert-item{
+    background:rgba(255,255,255,.6); border-radius:10px; padding:10px 12px; font-size:13px;
+  }
+  .alert-item b{ display:block; margin-bottom:4px; }
+  .alert-item .pill{
+    display:inline-block; font-size:11.5px; font-weight:700; padding:1px 8px; border-radius:999px;
+    background:#fff; border:1px solid #e6c78f; color:var(--warn); margin-right:6px;
+  }
+  .alert-item ul{ margin:6px 0 0; padding-left:18px; }
+  .toggle-btn{
+    background:none; border:1px solid #e6c78f; color:var(--warn); border-radius:8px;
+    font-size:12px; padding:4px 10px; cursor:pointer; font-weight:600; margin-left:auto;
+  }
+
+  h2.section-title{ font-size:15px; margin:26px 0 12px; color:var(--ink); }
+
+  .sector-grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:14px;
+  }
+  .sector-card{
+    background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
+    padding:16px 18px; cursor:pointer; box-shadow:var(--shadow); transition:transform .12s, box-shadow .12s;
+  }
+  .sector-card:hover{ transform:translateY(-2px); box-shadow:0 4px 18px rgba(20,25,35,.12); }
+  .sector-card.selected{ outline:2px solid var(--accent); }
+  .sector-card .icon{ font-size:22px; }
+  .sector-card h3{ margin:8px 0 2px; font-size:15.5px; }
+  .sector-card .count{ font-size:26px; font-weight:700; color:var(--accent); }
+  .sector-card .count span{ font-size:12.5px; color:var(--ink-soft); font-weight:500; }
+  .sector-card .fns{ font-size:12px; color:var(--ink-soft); margin-top:4px;}
+
+  .cargo-grid{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:12px; margin-top:14px;
+  }
+  .cargo-card{
+    background:var(--panel); border:1px solid var(--border); border-radius:12px;
+    padding:13px 15px; cursor:pointer; transition:box-shadow .12s, transform .12s;
+  }
+  .cargo-card:hover{ box-shadow:var(--shadow); transform:translateY(-1px); }
+  .cargo-card h4{ margin:0 0 6px; font-size:13.8px; }
+  .cargo-card .row{ display:flex; justify-content:space-between; font-size:12.5px; color:var(--ink-soft); margin-top:3px; }
+  .cargo-card .sal{ font-weight:700; color:var(--ink); }
+  .cargo-card .warn-badge{
+    display:inline-block; margin-top:8px; font-size:11px; font-weight:700; color:var(--bad);
+    background:var(--bad-bg); padding:2px 8px; border-radius:999px;
+  }
+
+  .search-box{
+    display:flex; gap:8px; margin:18px 0; align-items:center;
+  }
+  .search-box input{
+    flex:1; max-width:340px; padding:9px 12px; border-radius:10px; border:1px solid var(--border);
+    font-size:13.5px; background:var(--panel);
+  }
+  .search-box .hint{ font-size:12px; color:var(--ink-soft); }
+
+  /* modal */
+  .overlay{
+    position:fixed; inset:0; background:rgba(15,20,28,.45); display:none;
+    align-items:flex-start; justify-content:center; padding:40px 16px; z-index:50; overflow-y:auto;
+  }
+  .overlay.show{ display:flex; }
+  .modal{
+    background:var(--panel); border-radius:16px; max-width:820px; width:100%;
+    box-shadow:0 20px 60px rgba(0,0,0,.3); overflow:hidden;
+  }
+  .modal-head{
+    display:flex; justify-content:space-between; align-items:flex-start; padding:20px 24px 14px;
+    border-bottom:1px solid var(--border);
+  }
+  .modal-head h3{ margin:0 0 4px; font-size:17px; }
+  .modal-head .sub{ font-size:12.5px; color:var(--ink-soft); }
+  .modal-close{
+    border:none; background:var(--neutral-bg); width:30px; height:30px; border-radius:50%;
+    font-size:15px; cursor:pointer; color:var(--ink-soft);
+  }
+  .modal-body{ padding:18px 24px 24px; max-height:70vh; overflow-y:auto; }
+  table.emp-table{ width:100%; border-collapse:collapse; font-size:13px; }
+  table.emp-table th{
+    text-align:left; font-size:11.5px; text-transform:uppercase; letter-spacing:.03em;
+    color:var(--ink-soft); border-bottom:1px solid var(--border); padding:8px 8px;
+  }
+  table.emp-table td{ padding:9px 8px; border-bottom:1px solid var(--border); vertical-align:top; }
+  table.emp-table tr:last-child td{ border-bottom:none; }
+  .badge{
+    display:inline-block; font-size:11px; font-weight:700; padding:2px 9px; border-radius:999px;
+  }
+  .badge.trab{ background:var(--good-bg); color:var(--good); }
+  .badge.doenca{ background:var(--warn-bg); color:var(--warn); }
+  .badge.demitido{ background:var(--bad-bg); color:var(--bad); }
+  .obs-note{ font-size:11.5px; color:var(--ink-soft); margin-top:2px; }
+  .modal-foot-note{ font-size:12px; color:var(--ink-soft); margin-top:14px; }
+
+  .setor-block{
+    background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
+    padding:16px 18px 6px; margin-bottom:18px; box-shadow:var(--shadow);
+  }
+  .setor-block h3{
+    margin:0 0 10px; font-size:15px; display:flex; align-items:center; gap:8px;
+  }
+  .setor-block h3 .n{ font-size:12px; font-weight:600; color:var(--ink-soft); }
+  .setor-block table.emp-table{ margin-bottom:8px; }
+  .setor-block td.cargo-col{ color:var(--ink-soft); font-size:12.5px; }
+
+  footer.note{
+    margin-top:30px; font-size:12px; color:var(--ink-soft); border-top:1px solid var(--border);
+    padding-top:14px;
+  }
+
+  .share-btn{
+    background:var(--accent); color:#fff; border:none; border-radius:10px;
+    padding:9px 16px; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap;
+    box-shadow:var(--shadow);
+  }
+  .share-btn:hover{ filter:brightness(1.07); }
+
+  .toast{
+    position:fixed; left:50%; bottom:26px; transform:translate(-50%,20px);
+    background:#1b2430; color:#fff; padding:12px 18px; border-radius:10px;
+    font-size:13px; max-width:min(90vw,460px); box-shadow:0 8px 24px rgba(0,0,0,.25);
+    opacity:0; pointer-events:none; transition:opacity .2s, transform .2s; z-index:100; text-align:left;
+  }
+  .toast.show{ opacity:1; transform:translate(-50%,0); }
+  .toast b{ display:block; margin-bottom:2px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div>
+      <h1>Headcount RH/DP · Grupo Almeria</h1>
+      <div class="sub">Consolidado a partir da folha de pagamento e da planilha de comissão por pontuação</div>
+    </div>
+    <button class="share-btn" id="shareBtn" onclick="shareArtifact()">🔗 Compartilhar</button>
+  </header>
+
+  <div class="units" id="unitTabs"></div>
+
+  <div class="meta-row" id="metaRow"></div>
+
+  <div class="stat-grid" id="statGrid"></div>
+
+  <div id="notionBox"></div>
+  <div id="alertBox"></div>
+  <div id="pendingHiresBox"></div>
+
+  <h2 class="section-title">Setores — Wine Garden</h2>
+  <div class="sector-grid" id="sectorGrid"></div>
+
+  <div id="cargoArea"></div>
+
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Buscar colaborador por nome...">
+    <span class="hint" id="searchHint"></span>
+  </div>
+  <div id="searchResults"></div>
+
+  <h2 class="section-title" style="margin-top:34px;">Relação de colaboradores por setor</h2>
+  <div id="fullListArea"></div>
+
+  <footer class="note">
+    Fonte: folha de pagamento (competência <span id="fComp"></span>) e planilha de comissão — pontuação da <span id="fPeriodo"></span>.
+    Setor de cada função foi inferido a partir do tipo de cargo (a folha não traz um campo de departamento próprio) — ajuste os agrupamentos se algo não bater com a realidade operacional da unidade.
+  </footer>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <h3 id="modalTitle">Função</h3>
+        <div class="sub" id="modalSub"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script id="data" type="application/json">{
+  "unidade": "WINE GARDEN",
+  "competencia_folha": "07/2026",
+  "periodo_comissao": "1ª quinzena de agosto/2026 (01/08 a 15/08)",
+  "employees": [
+    {
+      "nome": "Alex Felipe Alves Da Silva",
+      "matricula": "164",
+      "setor": "Cozinha",
+      "cargo": "Tournant",
+      "cargo_cod": "59",
+      "salario": 2325.28,
+      "situacao": "Trabalhando",
+      "admissao": "05/09/2025",
+      "comissao": 921.31,
+      "pontos": 1.5,
+      "pontos_quinzena": 24.0,
+      "obs": ""
+    },
+    {
+      "nome": "Aline Rufino Dos Santos Da Costa",
+      "matricula": "138",
+      "setor": "Cozinha",
+      "cargo": "Cozinheiro",
+      "cargo_cod": "51",
+      "salario": 2073.38,
+      "situacao": "Trabalhando",
+      "admissao": "24/11/2025",
+      "comissao": 921.31,
+      "pontos": 1.5,
+      "pontos_quinzena": 24.0,
+      "obs": ""
+    },
+    {
+      "nome": "Anastacio Dos Santos",
+      "matricula": "33",
+      "setor": "Cozinha",
+      "cargo": "Cozinheiro A",
+      "cargo_cod": "32",
+      "salario": 1963.7,
+      "situacao": "Trabalhando",
+      "admissao": "15/05/2023",
+      "comissao": 921.31,
+      "pontos": 1.5,
+      "pontos_quinzena": 24.0,
+      "obs": ""
+    },
+    {
+      "nome": "Bruna Silva Cunha",
+      "matricula": "16",
+      "setor": "Cozinha",
+      "cargo": "Chefe De Praça",
+      "cargo_cod": "41",
+      "salario": 2498.05,
+      "situacao": "Trabalhando",
+      "admissao": "05/07/2022",
+      "comissao": 1535.51,
+      "pontos": 2.5,
+      "pontos_quinzena": 40.0,
+      "obs": ""
+    },
+    {
+      "nome": "Bruno Da Silva",
+      "matricula": "21",
+      "setor": "Cozinha",
+      "cargo": "Chefe De Praça",
+      "cargo_cod": "41",
+      "salario": 2498.05,
+      "situacao": "Trabalhando",
+      "admissao": "06/10/2022",
+      "comissao": 1535.51,
+      "pontos": 2.5,
+      "pontos_quinzena": 40.0,
+      "obs": ""
+    },
+    {
+      "nome": "Bruno Muttes De Loiola",
+      "matricula": "4",
+      "setor": "Gerência/Diretoria",
+      "cargo": "Gerente",
+      "cargo_cod": "64",
+      "salario": 3670.08,
+      "situacao": "Trabalhando",
+      "admissao": "01/12/2019",
+      "comissao": 1842.62,
+      "pontos": 3,
+      "pontos_quinzena": 48,
+      "obs": ""
+    },
+    {
+      "nome": "Caiury Costa Gomes",
+      "matricula": "155",
+      "setor": "Salão",
+      "cargo": "Cumim",
+      "cargo_cod": "4",
+      "salario": 1750.68,
+      "situacao": "Trabalhando",
+      "admissao": "21/03/2026",
+      "comissao": 614.21,
+      "pontos": 1,
+      "pontos_quinzena": 16,
+      "obs": ""
+    },
+    {
+      "nome": "Christine Estella Jacinto Da Costa",
+      "matricula": "165",
+      "setor": "Cozinha",
+      "cargo": "Tournant",
+      "cargo_cod": "59",
+      "salario": 2325.28,
+      "situacao": "Trabalhando",
+      "admissao": "17/02/2023",
+      "comissao": 921.31,
+      "pontos": 1.5,
+      "pontos_quinzena": 24.0,
+      "obs": ""
+    },
+    {
+      "nome": "Deborah Da Silva Mendes",
+      "matricula": "166",
+      "setor": "Cozinha",
+      "cargo": "Chef",
+      "cargo_cod": "56",
+      "salario": 3487.93,
+      "situacao": "Trabalhando",
+      "admissao": "17/04/2025",
+      "comissao": 1842.62,
+      "pontos": 3,
+      "pontos_quinzena": 48,
+      "obs": "Prêmio folha 07/2026: R$ 1.500,00"
+    },
+    {
+      "nome": "Denileia Silva Viegas",
+      "matricula": "24",
+      "setor": "Cozinha",
+      "cargo": "Supervisor Cozinha",
+      "cargo_cod": "38",
+      "salario": 2248.24,
+      "situacao": "Trabalhando",
+      "admissao": "12/01/2023",
+      "comissao": 1535.51,
+      "pontos": 2.5,
+      "pontos_quinzena": 40.0,
+      "obs": ""
+    },
+    {
+      "nome": "Douglas Andrade Santos",
+      "matricula": "172",
+      "setor": "Bar",
+      "cargo": "Bartender",
+      "cargo_cod": "22",
+      "salario": 1750.68,
+      "situacao": "Trabalhando",
+      "admissao": "17/07/2026",
+      "comissao": null,
+      "pontos": null,
+      "pontos_quinzena": null,
+      "obs": "Não localizado na planilha de comissão de agosto"
+    },
+    {
+      "nome": "Edielson Miranda Da Silva",
+      "matricula": "9",
+      "setor": "Cozinha",
+      "cargo": "Cozinheiro B",
+      "cargo_cod": "14",
+      "salario": 1750.68,
+      "situacao": "Doença",
+      "admissao": "02/09/2021",
+      "comissao": null,
+      "pontos": null,
+      "pontos_quinzena": null,
+      "obs": "Afastado por doença (período superior a 15 dias)"
+    },
+    {
+      "nome": "Evanilson Da Silva Santos",
+      "matricula": "170",
+      "setor": "Serviços Gerais / Estoque",
+      "cargo": "Estoquista",
+      "cargo_cod": "28",
+      "salario": 2248.24,
+      "situacao": "Trabalhando",
+      "admissao": "03/11/2025",
+      "comissao": 266.02,
+      "pontos": 0.5,
+      "pontos_quinzena": 6.5,
+      "obs": ""
+    },
+    {
+      "nome": "Francisca Braga Santos",
+      "matricula": "27",
+      "setor": "Cozinha",
+      "cargo": "Cozinheiro B",
+      "cargo_cod": "14",
+      "salario": 1750.68,
+      "situacao": "Trabalhando",
+      "admissao": "11/03/2023",
+      "comissao": 614.21,
+      "pontos": 1,
+      "pontos_quinzena": 16,
+      "obs": ""
+    },
+    {
+      "nome": "Gabriel Carlos Trindade Freitas",
+      "matricula": "136",
+      "setor": "Cozinha",
+      "cargo": "Sous Chef",
+      "cargo_cod": "42",
+      "salario": 2906.6,
+      "situacao": "Trabalhando",
+      "admissao": "19/11/2025",
+      "comissao": 1535.51,
+      "pontos": 2.5,
+      "pontos_quinzena": 40.0,
+      "obs": ""
+    },
+    {
+      "nome": "Gabriel Teofilo De Sousa",
+      "matricula": "69",
+      "setor": "Salão",
+      "cargo": "Garçom",
+      "cargo_cod": "2",
+      "salario": 1858.81,
+      "situacao": "Trabalhando",
+      "admissao": "21/11/2024",
+      "comissao": 1228.41,
+      "pontos": 2,
+      "pontos_quinzena": 32,
+      "obs": ""
+    },
+    {
+      "nome": "Geovanna Elysia Rodrigues Muttes Da Silva",
+      "matricula": "160",
+      "setor": "Salão",
+      "cargo": "Hostes",
+      "cargo_cod": "47",
+      "salario": 1750.68,
+      "situacao": "Trabalhando",
+      "admissao": "05/05/2026",
+      "comissao": 177.05,
+      "pontos": 1,
+      "pontos_quinzena": 5,
+      "obs": "⚠ Em cumprimento de aviso prévio, sem justa causa (Notion — Rescisão em andamento). Desligamento previsto em breve.",
+      "notion_alert": true
+    },
+    {
+      "nome": "Higor Ferreira Santos",
+      "matricula": "125",
+      "setor": "Bar",
+      "cargo": "Chefe De Bar",
+      "cargo_cod": "49",
+      "salario": 2742.08,
+      "situacao": "Trabalhando",
+      "admissao": "03/09/2025",
+      "comissao": 1228.41,
+      "pontos": 2,
+      "pontos_quinzena": 32,
+      "obs": ""
+    },
+    {
+      "nome": "Italo De Sousa",
+      "matricula": "108",
+      "setor": "Salão",
+      "cargo": "Coordenador De Salão",
+      "cargo_cod": "44",
+      "salario": 2543.91,
+      "situacao": "Trabalhando",
+      "admissao": "07/03/2025",
+      "comissao": 1535.51,
+      "pontos": 2.5,
+      "pontos_quinzena": 40.0,
+      "obs": "Em férias (01/07/2026 a 30/07/2026)"
+    },
+    {
+      "nome": "Jardel Dos Santos Souza",
+      "matricula": "81",
+      "setor": "Salão",
+      "cargo": "Cumim",
+      "cargo_cod": "4",
+      "salario": 1750.68,
+      "situacao": "Trabalhando",
+      "admissao": "19/02/2025",
+      "comissao": 614.21,
+      "pontos": 1,
+      "pontos_quinzena": 16,
+      "obs": ""
+    },
+    {
+      "nome": "Jhulia Batista De Araujo",
+      "matricula": "111",
+      "setor": "Serviços Gerais / Estoque",
+      "cargo": "Auxiliar De Servicos Gerais - Plus",
+      "cargo_cod": "48",
+      "salario": 1750.68,
+      "situacao": "Trabalhando",
+      "admissao": "19/05/2025",
+      "comissao": 0.0,
+      "pontos": 0.5,
+      "pontos_quinzena": 0.5,
+      "obs": ""
+    },
+    {
+      "nome": "Joao Francisco De Camargo Neto",
+      "matricula": "139",
+      "setor": "Salão",
+      "cargo": "Cumim",
+      "cargo_cod": "4",
+      "salario": 1750.68,
+      "situacao": "Trabalhando",
+      "admissao": "22/11/2025",
+      "comissao": 614.21,
+      "pontos": 1,
+      "pontos_quinzena": 16,
+      "obs": ""
+    },
+    {
+      "nome": "Jordana Mescouto Da Cunha",
+      "matricula": "126",
+      "setor": "Salão",
+      "cargo": "Hostes",
+      "cargo_cod": "47",
+      "salario": 1750.68,
+      "situacao": "Trabalhando",
+      "admissao": "09/09/2025",
+      "comissao": 614.21,
+      "pontos": 1,
+      "pontos_quinzena": 16,
+      "obs": ""
+    },
+    {
+      "nome": "Leane Pereira Da Silva",
+      "matricula": "22",
+      "setor": "Cozinha",
+      "cargo": "Cozinheiro A",
+      "cargo_cod": "32",
+      "salario": 1963.7,
+      "situacao": "Trabalhando",
+      "admissao": "04/11/2022",
+      "comissao": 921.31,
+      "pontos": 1.5,
+      "pontos_quinzena": 24.0,
+      "obs": ""
+    },
+    {
+      "nome": "Leidiane Barreto Da Silva",
+      "matricula": "99",
+      "setor": "Cozinha",
+      "cargo": "Cozinheiro B",
+      "cargo_cod": "14",
+      "salario": 1750.68,
+      "situacao": "Trabalhando",
+      "admissao": "09/04/2025",
+      "comissao": 614.21,
+      "pontos": 1,
+      "pontos_quinzena": 16,
+      "obs": ""
+    },
+    {
+      "nome": "Leudiane Da Silva Machado",
+      "matricula": "82",
+      "setor": "Serviços Gerais / Estoque",
+      "cargo": "Auxiliar De Servicos Gerais - Plus",
+      "cargo_cod": "48",
+      "salario": 2398.5,
+      "situacao": "Trabalhando",
+      "admissao": "20/02/2025",
+      "comissao": 307.1,
+      "pontos": 0.5,
+      "pontos_quinzena": 8.0,
+      "obs": ""
+    },
+    {
+      "nome": "Lucas Ferreira Vieira",
+      "matricula": "140",
+      "setor": "Salão",
+      "cargo": "Garçom",
+      "cargo_cod": "2",
+      "salario": 1858.81,
+      "situacao": "Trabalhando",
+      "admissao": "26/11/2025",
+      "comissao": 1228.41,
+      "pontos": 2,
+      "pontos_quinzena": 32,
+      "obs": ""
+    },
+    {
+      "nome": "Lucas Godoy De Carvalho",
+      "matricula": "169",
+      "setor": "Salão",
+      "cargo": "Sommelier",
+      "cargo_cod": "61",
+      "salario": 2150.0,
+      "situacao": "Trabalhando",
+      "admissao": "08/07/2026",
+      "comissao": 614.21,
+      "pontos": 1,
+      "pontos_quinzena": 16,
+      "obs": "Prêmio folha 07/2026: R$ 656,01"
+    },
+    {
+      "nome": "Lucas Machado Da Silva",
+      "matricula": "153",
+      "setor": "Bar",
+      "cargo": "Bartender",
+      "cargo_cod": "22",
+      "salario": 1750.68,
+      "situacao": "Trabalhando",
+      "admissao": "20/02/2026",
+      "comissao": 614.21,
+      "pontos": 1,
+      "pontos_quinzena": 16,
+      "obs": ""
+    },
+    {
+      "nome": "Marcelo Edivaldo Dos Santos Costa",
+      "matricula": "40",
+      "setor": "Salão",
+      "cargo": "Garçom",
+      "cargo_cod": "2",
+      "salario": 1858.81,
+      "situacao": "Trabalhando",
+      "admissao": "05/10/2023",
+      "comissao": 1228.41,
+      "pontos": 2,
+      "pontos_quinzena": 32,
+      "obs": ""
+    },
+    {
+      "nome": "Marcos Venicius Oliveira Sousa",
+      "matricula": "10",
+      "setor": "Cozinha",
+      "cargo": "Chefe De Praça",
+      "cargo_cod": "41",
+      "salario": 2498.05,
+      "situacao": "Trabalhando",
+      "admissao": "02/09/2021",
+      "comissao": 1535.51,
+      "pontos": 2.5,
+      "pontos_quinzena": 40.0,
+      "obs": ""
+    },
+    {
+      "nome": "Marcos Vinicius Lopes Da Silva",
+      "matricula": "66",
+      "setor": "Salão",
+      "cargo": "Cumim",
+      "cargo_cod": "4",
+      "salario": 1750.68,
+      "situacao": "Doença",
+      "admissao": "11/11/2024",
+      "comissao": 0.0,
+      "pontos": 0,
+      "pontos_quinzena": 0,
+      "obs": "Afastado por doença (período superior a 15 dias)"
+    },
+    {
+      "nome": "Mariana Silva De Oliveira",
+      "matricula": "122",
+      "setor": "Salão",
+      "cargo": "Hostes",
+      "cargo_cod": "47",
+      "salario": 1750.68,
+      "situacao": "Trabalhando",
+      "admissao": "28/08/2025",
+      "comissao": 614.21,
+      "pontos": 1,
+      "pontos_quinzena": 16,
+      "obs": ""
+    },
+    {
+      "nome": "Mariangela Torres Da Silva",
+      "matricula": "62",
+      "setor": "Serviços Gerais / Estoque",
+      "cargo": "Auxiliar De Servicos Gerais",
+      "cargo_cod": "31",
+      "salario": 1750.68,
+      "situacao": "Doença",
+      "admissao": "04/10/2024",
+      "comissao": null,
+      "pontos": null,
+      "pontos_quinzena": null,
+      "obs": "Afastado por doença (período superior a 15 dias)"
+    },
+    {
+      "nome": "Mariannys De Los Angeles Gonzalez Bastardo",
+      "matricula": "143",
+      "setor": "Serviços Gerais / Estoque",
+      "cargo": "Auxiliar De Servicos Gerais",
+      "cargo_cod": "25",
+      "salario": 1750.68,
+      "situacao": "Trabalhando",
+      "admissao": "12/12/2025",
+      "comissao": 307.1,
+      "pontos": 0.5,
+      "pontos_quinzena": 8.0,
+      "obs": ""
+    },
+    {
+      "nome": "Marlene Del Carmen Rodrigues Blanco",
+      "matricula": "147",
+      "setor": "Serviços Gerais / Estoque",
+      "cargo": "Auxiliar De Servicos Gerais",
+      "cargo_cod": "25",
+      "salario": 1750.68,
+      "situacao": "Trabalhando",
+      "admissao": "17/01/2026",
+      "comissao": 307.1,
+      "pontos": 0.5,
+      "pontos_quinzena": 8.0,
+      "obs": ""
+    },
+    {
+      "nome": "Paulo Henrique Veras",
+      "matricula": "20",
+      "setor": "Cozinha",
+      "cargo": "Cozinheiro A",
+      "cargo_cod": "32",
+      "salario": 1963.7,
+      "situacao": "Trabalhando",
+      "admissao": "03/10/2022",
+      "comissao": 921.31,
+      "pontos": 1.5,
+      "pontos_quinzena": 24.0,
+      "obs": ""
+    },
+    {
+      "nome": "Pedro Eduardo Martins Parente De Carvalho",
+      "matricula": "162",
+      "setor": "Bar",
+      "cargo": "Bartender",
+      "cargo_cod": "22",
+      "salario": 1750.68,
+      "situacao": "Trabalhando",
+      "admissao": "14/05/2026",
+      "comissao": 614.21,
+      "pontos": 1,
+      "pontos_quinzena": 16,
+      "obs": ""
+    },
+    {
+      "nome": "Pedro Henrique Lima Nunes",
+      "matricula": "145",
+      "setor": "Serviços Gerais / Estoque",
+      "cargo": "Auxiliar De Servicos Gerais",
+      "cargo_cod": "25",
+      "salario": 1750.68,
+      "situacao": "Trabalhando",
+      "admissao": "06/01/2026",
+      "comissao": 307.1,
+      "pontos": 0.5,
+      "pontos_quinzena": 8.0,
+      "obs": ""
+    },
+    {
+      "nome": "Rafael Almeida Sa Teles",
+      "matricula": "151",
+      "setor": "Salão",
+      "cargo": "Cumim",
+      "cargo_cod": "4",
+      "salario": 1750.68,
+      "situacao": "Trabalhando",
+      "admissao": "14/02/2026",
+      "comissao": 581.9,
+      "pontos": 1,
+      "pontos_quinzena": 15,
+      "obs": "⚠ Processo de rescisão aberto no Notion (status: Não iniciado) — ainda ativo na folha, mas desligamento pode estar próximo. Acompanhar.",
+      "notion_alert": true
+    },
+    {
+      "nome": "Regiane Gomes Da Costa",
+      "matricula": "53",
+      "setor": "Salão",
+      "cargo": "Garçom",
+      "cargo_cod": "2",
+      "salario": 1858.81,
+      "situacao": "Trabalhando",
+      "admissao": "15/07/2024",
+      "comissao": 1228.41,
+      "pontos": 2,
+      "pontos_quinzena": 32,
+      "obs": ""
+    },
+    {
+      "nome": "Talyssa Oliveira Da Silva Machado",
+      "matricula": "128",
+      "setor": "Salão",
+      "cargo": "Garçom",
+      "cargo_cod": "2",
+      "salario": 1858.81,
+      "situacao": "Trabalhando",
+      "admissao": "12/09/2025",
+      "comissao": 1228.41,
+      "pontos": 2,
+      "pontos_quinzena": 32,
+      "obs": ""
+    },
+    {
+      "nome": "Tatiane Dos Santos Amorim",
+      "matricula": "171",
+      "setor": "Cozinha",
+      "cargo": "Chefe De Produção",
+      "cargo_cod": "60",
+      "salario": 2325.28,
+      "situacao": "Trabalhando",
+      "admissao": "27/09/2025",
+      "comissao": 921.31,
+      "pontos": 1.5,
+      "pontos_quinzena": 24.0,
+      "obs": ""
+    },
+    {
+      "nome": "Thiago Henry Cavalcante Da Silva",
+      "matricula": "167",
+      "setor": "Bar",
+      "cargo": "Bartender",
+      "cargo_cod": "22",
+      "salario": 1750.68,
+      "situacao": "Trabalhando",
+      "admissao": "01/07/2026",
+      "comissao": 614.21,
+      "pontos": 1,
+      "pontos_quinzena": 16,
+      "obs": ""
+    },
+    {
+      "nome": "Tyago Leandro Ribeiro Da Silva",
+      "matricula": "92",
+      "setor": "Bar",
+      "cargo": "Bartender",
+      "cargo_cod": "22",
+      "salario": 1750.68,
+      "situacao": "Trabalhando",
+      "admissao": "28/03/2025",
+      "comissao": 614.21,
+      "pontos": 1,
+      "pontos_quinzena": 16,
+      "obs": ""
+    },
+    {
+      "nome": "Valdir Xavier De Carvalho",
+      "matricula": "100",
+      "setor": "Salão",
+      "cargo": "Garçom",
+      "cargo_cod": "2",
+      "salario": 1858.87,
+      "situacao": "Trabalhando",
+      "admissao": "14/04/2025",
+      "comissao": 1228.41,
+      "pontos": 2,
+      "pontos_quinzena": 32,
+      "obs": ""
+    },
+    {
+      "nome": "Luiz Augusto Bolognani De Souza Jabur",
+      "matricula": "51",
+      "setor": "Gerência/Diretoria",
+      "cargo": "Diretor",
+      "cargo_cod": "34",
+      "salario": 5000.0,
+      "situacao": "Trabalhando",
+      "admissao": "04/12/2019",
+      "comissao": null,
+      "pontos": null,
+      "pontos_quinzena": null,
+      "obs": "Contrato: Diretor (pró-labore)"
+    },
+    {
+      "nome": "Luiza Gurgel De Amaral Melo",
+      "matricula": "49",
+      "setor": "Gerência/Diretoria",
+      "cargo": "Diretor",
+      "cargo_cod": "33",
+      "salario": 3000.0,
+      "situacao": "Trabalhando",
+      "admissao": "08/10/2019",
+      "comissao": null,
+      "pontos": null,
+      "pontos_quinzena": null,
+      "obs": "Contrato: Diretor (pró-labore)"
+    },
+    {
+      "nome": "Maria Eduarda Alvim Mendes",
+      "matricula": "50",
+      "setor": "Gerência/Diretoria",
+      "cargo": "Diretor",
+      "cargo_cod": "33",
+      "salario": 7000.0,
+      "situacao": "Trabalhando",
+      "admissao": "08/10/2019",
+      "comissao": null,
+      "pontos": null,
+      "pontos_quinzena": null,
+      "obs": "Contrato: Diretor (pró-labore)"
+    },
+    {
+      "nome": "Rhuan Alexsandro Miranda Correa",
+      "matricula": "—",
+      "setor": "Serviços Gerais / Estoque",
+      "cargo": "Auxiliar De Servicos Gerais",
+      "cargo_cod": "25",
+      "salario": 1750.68,
+      "situacao": "Trabalhando",
+      "admissao": "07/08/2026",
+      "comissao": 206.47,
+      "pontos": 0.5,
+      "pontos_quinzena": 5.0,
+      "obs": "Admitido em 07/08/2026 (confirmado no Notion — Contratação, Izzi, concluído). Ainda não aparece na folha de julho/2026 — salário estimado pela função (Auxiliar de Serviços Gerais), confirmar no próximo fechamento."
+    },
+    {
+      "nome": "Lucas Estevam Pereira De Santana",
+      "matricula": "—",
+      "setor": "Salão",
+      "cargo": "Hostes",
+      "cargo_cod": "47",
+      "salario": 1750.68,
+      "situacao": "Trabalhando",
+      "admissao": "06/08/2026",
+      "comissao": 437.16,
+      "pontos": 1,
+      "pontos_quinzena": 11.0,
+      "obs": "Admitido em 06/08/2026 (confirmado no Notion — Contratação, Izzi, concluído). Ainda não aparece na folha de julho/2026 — salário estimado pela função (Hostes), confirmar no próximo fechamento."
+    },
+    {
+      "nome": "Talles Caetano Rodrigues Dos Santos",
+      "matricula": "169 (Casa Almeria Delivery)",
+      "setor": "Salão",
+      "cargo": "Garçom",
+      "cargo_cod": "3",
+      "salario": 1873.54,
+      "situacao": "Trabalhando",
+      "admissao": "06/12/2025",
+      "comissao": 1228.41,
+      "pontos": 2,
+      "pontos_quinzena": 32.0,
+      "obs": "Registrado formalmente na empresa CASA ALMERIA DELIVERY LTDA (CNPJ 55.795.194/0001-50, matrícula 169), mas trabalha fisicamente no Wine Garden/Izzi — por isso entra na comissão e no headcount operacional do Wine Garden. Salário confirmado na folha de julho/2026 da Casa Delivery."
+    },
+    {
+      "nome": "Rhay Vieira Bonine Da Silva",
+      "matricula": "— (Almeria Buffet e Eventos)",
+      "setor": "Salão",
+      "cargo": "Garçom",
+      "cargo_cod": "2",
+      "salario": 1778.82,
+      "situacao": "Trabalhando",
+      "admissao": "29/08/2025",
+      "comissao": 1228.41,
+      "pontos": 2,
+      "pontos_quinzena": 32.0,
+      "obs": "Registrado formalmente na empresa ALMERIA BUFFET E EVENTOS LTDA, mas trabalha fisicamente no Wine Garden/Izzi — por isso entra na comissão e no headcount operacional do Wine Garden. Salário confirmado via Termo Aditivo de 01/04/2026."
+    }
+  ],
+  "desligados": [
+    {
+      "nome": "Gabriel Tavares Vieira",
+      "matricula": "163",
+      "setor": "Cozinha",
+      "cargo": "Cozinheiro",
+      "cargo_cod": "51",
+      "salario": 2073.38,
+      "situacao": "Demitido",
+      "admissao": "26/11/2025",
+      "comissao": null,
+      "pontos": null,
+      "pontos_quinzena": null,
+      "obs": "Demitido em 22/07/2026 - pedido de demissão sem justa causa",
+      "data_desligamento": "22/07/2026",
+      "motivo_desligamento": "pedido de demissão sem justa causa"
+    },
+    {
+      "nome": "Jhosef Rodrigo Sampaio Oliveira",
+      "matricula": "148",
+      "setor": "Serviços Gerais / Estoque",
+      "cargo": "Auxiliar De Servicos Gerais",
+      "cargo_cod": "25",
+      "salario": 1750.68,
+      "situacao": "Demitido",
+      "admissao": "06/01/2026",
+      "comissao": null,
+      "pontos": null,
+      "pontos_quinzena": null,
+      "obs": "Demitido em 30/07/2026 - com justa causa",
+      "data_desligamento": "30/07/2026",
+      "motivo_desligamento": "com justa causa"
+    },
+    {
+      "nome": "Marcos Vinicius De Souza Pereira",
+      "matricula": "70",
+      "setor": "Cozinha",
+      "cargo": "Cozinheiro B",
+      "cargo_cod": "14",
+      "salario": 1750.68,
+      "situacao": "Demitido",
+      "admissao": "21/11/2024",
+      "comissao": null,
+      "pontos": null,
+      "pontos_quinzena": null,
+      "obs": "Demitido em 22/07/2026 - sem justa causa",
+      "data_desligamento": "22/07/2026",
+      "motivo_desligamento": "sem justa causa"
+    }
+  ],
+  "inconsistencies": [
+    {
+      "cargo": "Garçom",
+      "detalhe": [
+        {
+          "nome": "Gabriel Teofilo De Sousa",
+          "salario": 1858.81,
+          "situacao": "Trabalhando",
+          "matricula": "69"
+        },
+        {
+          "nome": "Lucas Ferreira Vieira",
+          "salario": 1858.81,
+          "situacao": "Trabalhando",
+          "matricula": "140"
+        },
+        {
+          "nome": "Marcelo Edivaldo Dos Santos Costa",
+          "salario": 1858.81,
+          "situacao": "Trabalhando",
+          "matricula": "40"
+        },
+        {
+          "nome": "Regiane Gomes Da Costa",
+          "salario": 1858.81,
+          "situacao": "Trabalhando",
+          "matricula": "53"
+        },
+        {
+          "nome": "Talyssa Oliveira Da Silva Machado",
+          "salario": 1858.81,
+          "situacao": "Trabalhando",
+          "matricula": "128"
+        },
+        {
+          "nome": "Valdir Xavier De Carvalho",
+          "salario": 1858.87,
+          "situacao": "Trabalhando",
+          "matricula": "100"
+        }
+      ]
+    },
+    {
+      "cargo": "Auxiliar De Servicos Gerais - Plus",
+      "detalhe": [
+        {
+          "nome": "Jhulia Batista De Araujo",
+          "salario": 1750.68,
+          "situacao": "Trabalhando",
+          "matricula": "111"
+        },
+        {
+          "nome": "Leudiane Da Silva Machado",
+          "salario": 2398.5,
+          "situacao": "Trabalhando",
+          "matricula": "82"
+        }
+      ]
+    },
+    {
+      "cargo": "Diretor",
+      "detalhe": [
+        {
+          "nome": "Luiz Augusto Bolognani De Souza Jabur",
+          "salario": 5000.0,
+          "situacao": "Trabalhando",
+          "matricula": "51"
+        },
+        {
+          "nome": "Luiza Gurgel De Amaral Melo",
+          "salario": 3000.0,
+          "situacao": "Trabalhando",
+          "matricula": "49"
+        },
+        {
+          "nome": "Maria Eduarda Alvim Mendes",
+          "salario": 7000.0,
+          "situacao": "Trabalhando",
+          "matricula": "50"
+        }
+      ]
+    }
+  ],
+  "cod_inconsistencies": [
+    {
+      "cargo": "Auxiliar De Servicos Gerais",
+      "codigos": [
+        "25",
+        "31"
+      ]
+    },
+    {
+      "cargo": "Diretor",
+      "codigos": [
+        "33",
+        "34"
+      ]
+    }
+  ],
+  "commission_only": [
+    [
+      "Emerson Da Silva Lima",
+      "Coordenador (b)",
+      null,
+      1228.41
+    ]
+  ],
+  "pending_hires": [
+    {
+      "nome": "Emilayánne Sara Ribeiro Oliveira",
+      "cargo": "Garçom",
+      "unidade": "Izzi (Wine Garden)",
+      "inicio_previsto": "19/08/2026",
+      "status": "Concluído"
+    },
+    {
+      "nome": "Amanda Letícia Oliveira",
+      "cargo": "ASG",
+      "unidade": "Izzi (Wine Garden)",
+      "inicio_previsto": "20/08/2026",
+      "status": "Travado / colaborador"
+    }
+  ],
+  "notion_sync": {
+    "ultima_verificacao": "18/08/2026",
+    "rescisoes_em_andamento": [
+      {
+        "nome": "Rafael Almeida Sá Teles",
+        "cargo": "Cumim",
+        "status": "Não iniciado"
+      },
+      {
+        "nome": "Geovanna Elysia Rodrigues Muttes da Silva",
+        "cargo": "Hostes",
+        "status": "Em cumprimento de aviso (Sem Justa Causa)"
+      }
+    ]
+  }
+}</script>
+<script>
+const DATA = JSON.parse(document.getElementById('data').textContent);
+const EMP = DATA.employees;
+const money = v => v==null ? "—" : v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const badgeClass = s => s==='Trabalhando' ? 'trab' : (s==='Doença' ? 'doenca' : 'demitido');
+
+document.getElementById('fComp').textContent = DATA.competencia_folha;
+document.getElementById('fPeriodo').textContent = DATA.periodo_comissao;
+
+// ---- Unit tabs ----
+const UNITS = ["WINE GARDEN","CSC","CPD","BEIRA LAGO","NOROESTE","ASA SUL"];
+const unitTabs = document.getElementById('unitTabs');
+UNITS.forEach(u=>{
+  const b = document.createElement('div');
+  b.className = 'unit-btn ' + (u===DATA.unidade ? 'active' : 'disabled');
+  b.textContent = u===DATA.unidade ? u : u + ' (em breve)';
+  unitTabs.appendChild(b);
+});
+
+// ---- Meta row ----
+const metaRow = document.getElementById('metaRow');
+[
+  ['Unidade', DATA.unidade],
+  ['Competência da folha', DATA.competencia_folha],
+  ['Comissão apurada', DATA.periodo_comissao],
+  ['Total de pessoas', EMP.length]
+].forEach(([l,v])=>{
+  const c = document.createElement('div'); c.className='meta-chip';
+  c.innerHTML = `${l}: <b>${v}</b>`;
+  metaRow.appendChild(c);
+});
+
+// ---- Stat tiles ----
+const statGrid = document.getElementById('statGrid');
+const counts = {Trabalhando:0, "Doença":0, Demitido:0};
+EMP.forEach(e=> counts[e.situacao] = (counts[e.situacao]||0)+1);
+const tiles = [
+  ['Total de colaboradores ativos', EMP.length, ''],
+  ['Trabalhando', counts['Trabalhando']||0, 'trab'],
+  ['Afastados (doença)', counts['Doença']||0, 'doenca'],
+];
+tiles.forEach(([lbl,num,cls])=>{
+  const t = document.createElement('div'); t.className='stat-tile '+cls;
+  t.innerHTML = `<div class="num">${num}</div><div class="lbl">${lbl}</div>`;
+  statGrid.appendChild(t);
+});
+if(DATA.desligados && DATA.desligados.length){
+  const t = document.createElement('div'); t.className='stat-tile demitido';
+  t.style.cursor = 'pointer';
+  t.innerHTML = `<div class="num">${DATA.desligados.length}</div><div class="lbl">Desligados (histórico) — ver detalhes</div>`;
+  t.onclick = openDesligados;
+  statGrid.appendChild(t);
+}
+
+// ---- Alert box (inconsistencies) ----
+const alertBox = document.getElementById('alertBox');
+const hasSalaryIssues = DATA.inconsistencies.length>0;
+const hasCodeIssues = DATA.cod_inconsistencies.length>0;
+const commOnly = DATA.commission_only;
+const payrollGaps = EMP.filter(e=>{
+  const noComm = (e.comissao===null || e.comissao===undefined);
+  const isDirector = e.cargo_cod==='33' || e.cargo_cod==='34';
+  return noComm && e.situacao==='Trabalhando' && !isDirector;
+});
+
+let alertHTML = '';
+if(hasSalaryIssues || hasCodeIssues || commOnly.length || payrollGaps.length){
+  alertHTML += `<div class="alert-box"><h2>⚠ Inconsistências encontradas (${DATA.inconsistencies.length + DATA.cod_inconsistencies.length + commOnly.length + payrollGaps.length})
+    <button class="toggle-btn" onclick="toggleAlerts()" id="toggleBtn">recolher</button></h2><ul class="alert-list" id="alertList">`;
+
+  DATA.inconsistencies.forEach(inc=>{
+    alertHTML += `<li class="alert-item"><span class="pill">Salário</span><b>Função "${titleCase(inc.cargo)}" com salários diferentes</b><ul>`;
+    inc.detalhe.forEach(dt=>{
+      alertHTML += `<li>${titleCase(dt.nome)} — ${money(dt.salario)} (${dt.situacao}, matrícula ${dt.matricula})</li>`;
+    });
+    alertHTML += `</ul></li>`;
+  });
+
+  DATA.cod_inconsistencies.forEach(c=>{
+    alertHTML += `<li class="alert-item"><span class="pill">Cadastro</span><b>Função "${titleCase(c.cargo)}" está lançada com códigos de cargo diferentes na folha (${c.codigos.join(' e ')})</b> — mesmo nome de função, registros distintos; vale padronizar.</li>`;
+  });
+
+  if(payrollGaps.length){
+    alertHTML += `<li class="alert-item"><span class="pill">Comissão</span><b>Colaborador(es) ativo(s) na folha sem registro na planilha de comissão de agosto</b><ul>`;
+    payrollGaps.forEach(e=> alertHTML += `<li>${e.nome} — ${e.cargo}${e.obs ? ' ('+e.obs+')' : ''}</li>`);
+    alertHTML += `</ul></li>`;
+  }
+
+  if(commOnly.length){
+    alertHTML += `<li class="alert-item"><span class="pill">Comissão</span><b>Nome(s) na planilha de comissão que não aparecem na folha de ${DATA.competencia_folha}</b> — confira se são admissões recentes (ainda não fecharam folha) ou colaboradores de outra unidade lançados aqui por engano:<ul>`;
+    commOnly.forEach(c=> alertHTML += `<li>${c[0]} — ${c[1]}${c[2] ? ' (admissão informada: '+c[2]+')' : ' (sem data de admissão na planilha)'}</li>`);
+    alertHTML += `</ul></li>`;
+  }
+
+  alertHTML += `</ul></div>`;
+} else {
+  alertHTML = `<div class="alert-box ok"><h2>✓ Nenhuma inconsistência encontrada</h2></div>`;
+}
+alertBox.innerHTML = alertHTML;
+
+// ---- Notion sync box ----
+const notionBox = document.getElementById('notionBox');
+const ns = DATA.notion_sync;
+if(ns && (ns.rescisoes_em_andamento||[]).length){
+  let html = `<div class="info-box"><h2>🔄 Notion — última verificação: ${ns.ultima_verificacao}</h2><ul class="alert-list">`;
+  ns.rescisoes_em_andamento.forEach(r=>{
+    html += `<li class="alert-item"><span class="pill">Rescisão em andamento</span><b>${r.nome} (${r.cargo})</b> — status no Notion: ${r.status}. Continua ativo no headcount até o desligamento ser concluído.</li>`;
+  });
+  html += `</ul></div>`;
+  notionBox.innerHTML = html;
+}
+
+// ---- Pending hires (contratações previstas, ainda não iniciaram) ----
+const pendingBox = document.getElementById('pendingHiresBox');
+if(DATA.pending_hires && DATA.pending_hires.length){
+  let html = `<div class="info-box"><h2>📋 Contratações previstas — ${DATA.unidade} (ainda não contam no headcount)</h2>
+    <table class="emp-table"><thead><tr><th>Nome</th><th>Função</th><th>Início previsto</th><th>Status (Notion)</th></tr></thead><tbody>`;
+  DATA.pending_hires.forEach(p=>{
+    html += `<tr><td>${p.nome}</td><td>${p.cargo}</td><td>${p.inicio_previsto}</td><td>${p.status}</td></tr>`;
+  });
+  html += `</tbody></table></div>`;
+  pendingBox.innerHTML = html;
+}
+
+function toggleAlerts(){
+  const list = document.getElementById('alertList');
+  const btn = document.getElementById('toggleBtn');
+  const collapsed = list.style.display === 'none';
+  list.style.display = collapsed ? 'flex' : 'none';
+  btn.textContent = collapsed ? 'recolher' : 'expandir';
+}
+
+function titleCase(s){
+  return s.toLowerCase().replace(/(^|\s|\/)\p{L}/gu, m=>m.toUpperCase());
+}
+
+// ---- Sector grid ----
+const sectorOrder = ["Cozinha","Salão","Bar","Serviços Gerais / Estoque","Gerência/Diretoria"];
+const sectorIcons = {"Cozinha":"🍳","Salão":"🍽️","Bar":"🍸","Serviços Gerais / Estoque":"🧹","Gerência/Diretoria":"🗂️"};
+function bySetor(setor){ return EMP.filter(e=>e.setor===setor); }
+function cargosOfSetor(setor){
+  const map = {};
+  bySetor(setor).forEach(e=>{
+    if(!map[e.cargo]) map[e.cargo] = [];
+    map[e.cargo].push(e);
+  });
+  return map;
+}
+
+const sectorGrid = document.getElementById('sectorGrid');
+let selectedSector = null;
+
+function renderSectors(){
+  sectorGrid.innerHTML = '';
+  sectorOrder.forEach(setor=>{
+    const emps = bySetor(setor);
+    if(emps.length===0) return;
+    const cargos = cargosOfSetor(setor);
+    const card = document.createElement('div');
+    card.className = 'sector-card' + (selectedSector===setor ? ' selected' : '');
+    card.innerHTML = `<div class="icon">${sectorIcons[setor]||'📌'}</div>
+      <h3>${setor}</h3>
+      <div class="count">${emps.length} <span>pessoas</span></div>
+      <div class="fns">${Object.keys(cargos).length} funções</div>`;
+    card.onclick = ()=>{ selectedSector = (selectedSector===setor) ? null : setor; renderSectors(); renderCargos(); };
+    sectorGrid.appendChild(card);
+  });
+}
+
+function renderCargos(){
+  const area = document.getElementById('cargoArea');
+  if(!selectedSector){ area.innerHTML=''; return; }
+  const cargos = cargosOfSetor(selectedSector);
+  let html = `<h2 class="section-title">Funções — ${selectedSector}</h2><div class="cargo-grid">`;
+  Object.keys(cargos).sort().forEach(cargo=>{
+    const emps = cargos[cargo];
+    const salarios = [...new Set(emps.map(e=>e.salario))];
+    const salLabel = salarios.length===1 ? money(salarios[0]) : `${money(Math.min(...salarios))} – ${money(Math.max(...salarios))}`;
+    const comVals = emps.filter(e=>e.comissao!=null).map(e=>e.comissao);
+    const comAvg = comVals.length ? comVals.reduce((a,b)=>a+b,0)/comVals.length : null;
+    const ptsVals = [...new Set(emps.filter(e=>e.pontos!=null).map(e=>e.pontos))];
+    const ptsLabel = ptsVals.length===0 ? '—' : (ptsVals.length===1 ? fmtPts(ptsVals[0]) : ptsVals.sort((a,b)=>a-b).map(fmtPts).join(' / '));
+    const warn = salarios.length>1;
+    html += `<div class="cargo-card" onclick="openCargo('${encodeURIComponent(cargo)}','${encodeURIComponent(selectedSector)}')">
+      <h4>${cargo}</h4>
+      <div class="row"><span>Salário</span><span class="sal">${salLabel}</span></div>
+      <div class="row"><span>Colaboradores</span><span class="sal">${emps.length}</span></div>
+      <div class="row"><span>Pontuação (comissão)</span><span class="sal">${ptsLabel}</span></div>
+      <div class="row"><span>Comissão média (1ª quinz. ago)</span><span class="sal">${comAvg!=null?money(comAvg):'—'}</span></div>
+      ${warn ? '<div class="warn-badge">⚠ salários diferentes</div>' : ''}
+    </div>`;
+  });
+  html += `</div>`;
+  area.innerHTML = html;
+}
+
+function openCargo(cargoEnc, setorEnc){
+  const cargo = decodeURIComponent(cargoEnc);
+  const setor = decodeURIComponent(setorEnc);
+  const emps = EMP.filter(e=>e.setor===setor && e.cargo===cargo).sort((a,b)=>a.nome.localeCompare(b.nome));
+  document.getElementById('modalTitle').textContent = cargo;
+  document.getElementById('modalSub').textContent = `${setor} · ${emps.length} colaborador(es)`;
+  renderEmpTable(emps);
+  document.getElementById('overlay').classList.add('show');
+}
+
+function fmtPts(p){
+  if(p==null) return '—';
+  return p.toLocaleString('pt-BR',{minimumFractionDigits: p%1===0?0:1, maximumFractionDigits:1}) + ' pts';
+}
+
+function renderEmpTable(emps){
+  let html = `<table class="emp-table"><thead><tr>
+    <th>Nome</th><th>Situação</th><th>Admissão</th><th>Salário</th><th>Pontos/dia</th><th>Pontos quinz.</th><th>Comissão 1ª quinz. ago/26</th>
+  </tr></thead><tbody>`;
+  emps.forEach(e=>{
+    html += `<tr>
+      <td>${e.nome}${e.obs?`<div class="obs-note">${e.obs}</div>`:''}</td>
+      <td><span class="badge ${badgeClass(e.situacao)}">${e.situacao}</span></td>
+      <td>${e.admissao||'—'}</td>
+      <td>${money(e.salario)}</td>
+      <td>${fmtPts(e.pontos)}</td>
+      <td>${e.pontos_quinzena!=null ? e.pontos_quinzena.toLocaleString('pt-BR',{maximumFractionDigits:1}) : '—'}</td>
+      <td>${e.comissao!=null?money(e.comissao):'<span style="color:#a3271f;font-weight:600;">não localizado</span>'}</td>
+    </tr>`;
+  });
+  html += `</tbody></table><div class="modal-foot-note">Pontos/dia = peso fixo da função na régua de comissão (define a fatia diária do rateio). Pontos quinz. = soma dos pontos no período. Matrícula interna disponível na folha original para conferência.</div>`;
+  document.getElementById('modalBody').innerHTML = html;
+}
+
+function openDesligados(){
+  const list = (DATA.desligados||[]).slice().sort((a,b)=> (a.data_desligamento||'').split('/').reverse().join('') < (b.data_desligamento||'').split('/').reverse().join('') ? 1 : -1);
+  document.getElementById('modalTitle').textContent = 'Histórico de desligados';
+  document.getElementById('modalSub').textContent = `${DATA.unidade} · não entram no headcount ativo · ${list.length} registro(s)`;
+  let html = `<table class="emp-table"><thead><tr>
+    <th>Nome</th><th>Função</th><th>Setor</th><th>Admissão</th><th>Desligamento</th><th>Motivo</th>
+  </tr></thead><tbody>`;
+  list.forEach(e=>{
+    html += `<tr>
+      <td>${e.nome}</td>
+      <td>${e.cargo}</td>
+      <td>${e.setor}</td>
+      <td>${e.admissao||'—'}</td>
+      <td><span class="badge demitido">${e.data_desligamento||'—'}</span></td>
+      <td>${e.motivo_desligamento||'—'}</td>
+    </tr>`;
+  });
+  html += `</tbody></table><div class="modal-foot-note">Registros mantidos apenas para consulta histórica — não somam no headcount ativo nem nos setores/funções.</div>`;
+  document.getElementById('modalBody').innerHTML = html;
+  document.getElementById('overlay').classList.add('show');
+}
+
+function closeModal(){ document.getElementById('overlay').classList.remove('show'); }
+document.getElementById('overlay').addEventListener('click', e=>{ if(e.target.id==='overlay') closeModal(); });
+
+// ---- Search ----
+const searchInput = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
+searchInput.addEventListener('input', ()=>{
+  const q = searchInput.value.trim().toLowerCase();
+  if(q.length<2){ searchResults.innerHTML=''; return; }
+  const matches = EMP.filter(e=>e.nome.toLowerCase().includes(q));
+  if(!matches.length){ searchResults.innerHTML = `<div class="meta-chip">Nenhum colaborador encontrado.</div>`; return; }
+  renderEmpTable(matches);
+  searchResults.innerHTML = `<h2 class="section-title">Resultado da busca (${matches.length})</h2>` + document.getElementById('modalBody').innerHTML;
+});
+
+function renderFullList(){
+  const area = document.getElementById('fullListArea');
+  let html = '';
+  sectorOrder.forEach(setor=>{
+    const emps = bySetor(setor).slice().sort((a,b)=> a.cargo.localeCompare(b.cargo) || a.nome.localeCompare(b.nome));
+    if(!emps.length) return;
+    html += `<div class="setor-block"><h3>${sectorIcons[setor]||'📌'} ${setor} <span class="n">${emps.length} colaborador(es)</span></h3>`;
+    html += `<table class="emp-table"><thead><tr>
+      <th>Nome</th><th>Função</th><th>Admissão</th><th>Salário</th><th>Pontos/dia</th><th>Comissão 1ª quinz. ago/26</th><th>Situação</th>
+    </tr></thead><tbody>`;
+    emps.forEach(e=>{
+      html += `<tr>
+        <td>${e.nome}${e.obs?`<div class="obs-note">${e.obs}</div>`:''}</td>
+        <td class="cargo-col">${e.cargo}</td>
+        <td>${e.admissao||'—'}</td>
+        <td>${money(e.salario)}</td>
+        <td>${fmtPts(e.pontos)}</td>
+        <td>${e.comissao!=null?money(e.comissao):'<span style="color:#a3271f;font-weight:600;">não localizado</span>'}</td>
+        <td><span class="badge ${badgeClass(e.situacao)}">${e.situacao}</span></td>
+      </tr>`;
+    });
+    html += `</tbody></table></div>`;
+  });
+  area.innerHTML = html;
+}
+
+renderSectors();
+renderCargos();
+renderFullList();
+
+// ---- Share ----
+let toastTimer = null;
+function showToast(html){
+  const t = document.getElementById('toast');
+  t.innerHTML = html;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> t.classList.remove('show'), 6000);
+}
+
+function shareArtifact(){
+  const isHosted = /^https?:/.test(location.protocol);
+  const title = `Headcount RH/DP · ${DATA.unidade} · Grupo Almeria`;
+  const text = `Headcount interativo do ${DATA.unidade} (RH/DP · Grupo Almeria) — setores, funções, salários, pontuação e comissão da quinzena.`;
+
+  if(isHosted && navigator.share){
+    navigator.share({ title, text, url: location.href }).catch(()=>{});
+    return;
+  }
+  if(isHosted && navigator.clipboard){
+    navigator.clipboard.writeText(location.href).then(()=>{
+      showToast(`<b>Link copiado!</b>Cole no e-mail ou mensagem para sua diretora.`);
+    }).catch(()=> showToast(`<b>Link deste painel:</b>${location.href}`));
+    return;
+  }
+  // Arquivo local (aberto direto no navegador) — não existe link hospedado para copiar.
+  const msg = `Segue o headcount interativo do ${DATA.unidade} (RH/DP · Grupo Almeria) em anexo. É um arquivo HTML — é só abrir no navegador, não precisa instalar nada.`;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(msg).then(()=>{
+      showToast(`<b>Este arquivo está aberto localmente, então não existe um link para compartilhar.</b>Copiei uma mensagem pronta — cole no e-mail/WhatsApp e anexe o arquivo Headcount_${DATA.unidade.replace(/\s+/g,'_')}.html junto.`);
+    }).catch(()=>{
+      showToast(`<b>Este é um arquivo local, sem link.</b>Encaminhe o próprio arquivo .html por e-mail ou WhatsApp.`);
+    });
+  } else {
+    showToast(`<b>Este é um arquivo local, sem link.</b>Encaminhe o próprio arquivo .html por e-mail ou WhatsApp.`);
+  }
+}
+</script>
+</body>
+</html>
