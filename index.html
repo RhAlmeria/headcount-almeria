@@ -265,7 +265,7 @@
   <div id="alertBox"></div>
   <div id="pendingHiresBox"></div>
 
-  <h2 class="section-title">Setores — Wine Garden</h2>
+  <h2 class="section-title" id="sectorsTitle">Setores — Wine Garden</h2>
   <div class="sector-grid" id="sectorGrid"></div>
 
   <div id="cargoArea"></div>
@@ -487,6 +487,8 @@ function toggleAlerts(){
 const sectorGrid = document.getElementById('sectorGrid');
 
 function renderSectors(){
+  const sectorsTitleEl = document.getElementById('sectorsTitle');
+  if(sectorsTitleEl) sectorsTitleEl.textContent = `Setores — ${titleCase(DATA.unidade)}`;
   sectorGrid.innerHTML = '';
   sectorOrder.forEach(setor=>{
     const emps = bySetor(setor);
