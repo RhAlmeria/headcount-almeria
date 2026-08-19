@@ -522,14 +522,23 @@ function renderCargos(){
     const comAvg = comVals.length ? comVals.reduce((a,b)=>a+b,0)/comVals.length : null;
     const ptsVals = [...new Set(emps.filter(e=>e.pontos!=null).map(e=>e.pontos))];
     const ptsLabel = ptsVals.length===0 ? '—' : (ptsVals.length===1 ? fmtPts(ptsVals[0]) : ptsVals.sort((a,b)=>a-b).map(fmtPts).join(' / '));
-    const warn = salarios.length>1;
+    const premVals = [...new Set(emps.map(e=>e.premiacao).filter(p=>p!=null))];
+    const premLabel = premVals.length===0 ? '—' : (premVals.length===1 ? money(premVals[0]) : `${money(Math.min(...premVals))} – ${money(Math.max(...premVals))}`);
+    const warnSalario = salarios.length>1;
+    const warnPontos = ptsVals.length>1;
+    const warnPremiacao = premVals.length>1;
+    let badges = '';
+    if(warnSalario) badges += '<div class="warn-badge">⚠ salários diferentes</div>';
+    if(warnPontos) badges += '<div class="warn-badge">⚠ pontuação (comissão) diferente</div>';
+    if(warnPremiacao) badges += '<div class="warn-badge">⚠ premiação (folha) diferente</div>';
     html += `<div class="cargo-card" onclick="openCargo('${encodeURIComponent(cargo)}','${encodeURIComponent(selectedSector)}')">
       <h4>${cargo}</h4>
       <div class="row"><span>Salário</span><span class="sal">${salLabel}</span></div>
       <div class="row"><span>Colaboradores</span><span class="sal">${emps.length}</span></div>
       <div class="row"><span>Pontuação (comissão)</span><span class="sal">${ptsLabel}</span></div>
       <div class="row"><span>Comissão média (1ª quinz. ago)</span><span class="sal">${comAvg!=null?money(comAvg):'—'}</span></div>
-      ${warn ? '<div class="warn-badge">⚠ salários diferentes</div>' : ''}
+      <div class="row"><span>Premiação (folha)</span><span class="sal">${premLabel}</span></div>
+      ${badges}
     </div>`;
   });
   html += `</div>`;
@@ -548,7 +557,7 @@ function openCargo(cargoEnc, setorEnc){
 
 function renderEmpTable(emps){
   let html = `<table class="emp-table"><thead><tr>
-    <th>Nome</th><th>Situação</th><th>Admissão</th><th>Salário</th><th>Pontos/dia</th><th>Pontos quinz.</th><th>Comissão 1ª quinz. ago/26</th>
+    <th>Nome</th><th>Situação</th><th>Admissão</th><th>Salário</th><th>Pontos/dia</th><th>Pontos quinz.</th><th>Comissão 1ª quinz. ago/26</th><th>Premiação (folha)</th>
   </tr></thead><tbody>`;
   emps.forEach(e=>{
     html += `<tr>
@@ -559,9 +568,10 @@ function renderEmpTable(emps){
       <td>${fmtPts(e.pontos)}</td>
       <td>${e.pontos_quinzena!=null ? e.pontos_quinzena.toLocaleString('pt-BR',{maximumFractionDigits:1}) : '—'}</td>
       <td>${e.comissao!=null?money(e.comissao):'<span style="color:#a3271f;font-weight:600;">não localizado</span>'}</td>
+      <td>${e.premiacao!=null?money(e.premiacao):'—'}</td>
     </tr>`;
   });
-  html += `</tbody></table><div class="modal-foot-note">Pontos/dia = peso fixo da função na régua de comissão (define a fatia diária do rateio). Pontos quinz. = soma dos pontos no período. Matrícula interna disponível na folha original para conferência.</div>`;
+  html += `</tbody></table><div class="modal-foot-note">Pontos/dia = peso fixo da função na régua de comissão (define a fatia diária do rateio). Pontos quinz. = soma dos pontos no período. Premiação (folha) = valor fixo de gratificação/prêmio pago via folha de pagamento, separado da comissão por pontuação — ainda não coletado para todos os colaboradores (aparece "—" onde falta o dado). Matrícula interna disponível na folha original para conferência.</div>`;
   document.getElementById('modalBody').innerHTML = html;
 }
 
