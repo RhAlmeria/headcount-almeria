@@ -209,9 +209,42 @@
   }
   .toast.show{ opacity:1; transform:translate(-50%,0); }
   .toast b{ display:block; margin-bottom:2px; }
+
+  #gate{
+    position:fixed; inset:0; background:var(--bg); z-index:1000;
+    display:flex; align-items:center; justify-content:center; padding:20px;
+  }
+  #gate .box{
+    background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
+    box-shadow:var(--shadow); padding:32px 28px; max-width:340px; width:100%; text-align:center;
+  }
+  #gate h1{ font-size:17px; margin:0 0 6px; }
+  #gate p{ font-size:13px; color:var(--ink-soft); margin:0 0 18px; }
+  #gate input{
+    width:100%; padding:10px 12px; border-radius:10px; border:1px solid var(--border);
+    font-size:14px; margin-bottom:12px; box-sizing:border-box;
+  }
+  #gate button{
+    width:100%; padding:10px 12px; border-radius:10px; border:none;
+    background:var(--accent); color:#fff; font-size:14px; font-weight:600; cursor:pointer;
+  }
+  #gate .err{ color:var(--bad); font-size:12.5px; margin-top:10px; display:none; }
+  #app-content{ display:none; }
 </style>
 </head>
 <body>
+
+<div id="gate">
+  <div class="box">
+    <h1>Headcount RH/DP · Grupo Almeria</h1>
+    <p>Acesso restrito. Digite a senha para continuar.</p>
+    <input type="password" id="gate-pass" placeholder="Senha" autocomplete="off">
+    <button id="gate-btn">Entrar</button>
+    <div class="err" id="gate-err">Senha incorreta.</div>
+  </div>
+</div>
+
+<div id="app-content">
 <div class="wrap">
 
   <header class="top">
@@ -1274,7 +1307,7 @@ const payrollGaps = EMP.filter(e=>{
 let alertHTML = '';
 if(hasSalaryIssues || hasCodeIssues || commOnly.length || payrollGaps.length){
   alertHTML += `<div class="alert-box"><h2>⚠ Inconsistências encontradas (${DATA.inconsistencies.length + DATA.cod_inconsistencies.length + commOnly.length + payrollGaps.length})
-    <button class="toggle-btn" onclick="toggleAlerts()" id="toggleBtn">recolher</button></h2><ul class="alert-list" id="alertList">`;
+    <button class="toggle-btn" onclick="toggleAlerts()" id="toggleBtn">expandir</button></h2><ul class="alert-list" id="alertList" style="display:none;">`;
 
   DATA.inconsistencies.forEach(inc=>{
     alertHTML += `<li class="alert-item"><span class="pill">Salário</span><b>Função "${titleCase(inc.cargo)}" com salários diferentes</b><ul>`;
@@ -1540,6 +1573,47 @@ function shareArtifact(){
     showToast(`<b>Este é um arquivo local, sem link.</b>Encaminhe o próprio arquivo .html por e-mail ou WhatsApp.`);
   }
 }
+</script>
+</div>
+<script>
+(function(){
+  const CORRECT_HASH = '7a130664eca91407e3a51363b2828b628e695cd30c62100f3cfa3044b8bed830';
+  const gate = document.getElementById('gate');
+  const content = document.getElementById('app-content');
+  const input = document.getElementById('gate-pass');
+  const btn = document.getElementById('gate-btn');
+  const err = document.getElementById('gate-err');
+
+  async function sha256(text){
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+    return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+
+  function unlock(){
+    gate.style.display = 'none';
+    content.style.display = 'block';
+    try{ sessionStorage.setItem('hc_unlocked','1'); }catch(e){}
+  }
+
+  async function tryUnlock(){
+    const val = input.value;
+    const hash = await sha256(val);
+    if(hash === CORRECT_HASH){
+      unlock();
+    } else {
+      err.style.display = 'block';
+      input.value = '';
+      input.focus();
+    }
+  }
+
+  btn.addEventListener('click', tryUnlock);
+  input.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') tryUnlock(); });
+
+  let already = false;
+  try{ already = sessionStorage.getItem('hc_unlocked') === '1'; }catch(e){}
+  if(already){ unlock(); } else { input.focus(); }
+})();
 </script>
 </body>
 </html>
